@@ -4,10 +4,31 @@
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
         <title>financetracker</title>
     </head>
     <body>
-        <h1>Hello</h1>
+        <div id="main">
+            <div id="navbar">
+                <a class="active" href="/"
+                    ><i class="fa fa-fw fa-home"></i> Home</a
+                >
+                <a href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+                <a href="#" id="login"
+                    ><i class="fa fa-fw fa-user"></i> Login</a
+                >
+                <a href="#" id="signup"
+                    ><i class="fa fa-fw fa-user"></i> SignUp</a
+                >
+            </div>
+            <h1 id="title">Finance Tracker</h1>
+
+            <div id="modal"></div>
+        </div>
+
         <script type="module" src="/src/main.js"></script>
     </body>
 </html>

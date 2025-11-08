@@ -1,0 +1,200 @@
+/* =============================
+   Base Styles
+============================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    background: rgba(255, 255, 255, 1);
+    font-family: "Poppins", sans-serif;
+}
+
+/* =============================
+   Navbar
+============================= */
+#navbar {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+    background: rgba(255, 255, 255, 1);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: fit-content;
+    margin: 3% auto;
+    padding: 0.6rem 1rem;
+    overflow: hidden;
+}
+
+#navbar a {
+    position: relative;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    color: black;
+    font-weight: 600;
+    z-index: 2;
+    transition:
+        color 0.3s ease,
+        transform 0.2s;
+}
+
+#navbar a:hover {
+    transform: scale(1.25);
+}
+
+#title {
+    text-align: center;
+    color: blue;
+    margin-top: 2rem;
+}
+
+/* =============================
+   Modal Overlay + Window
+============================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.closing {
+    opacity: 0;
+}
+
+.modal {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
+    animation: slideIn 0.3s ease;
+    backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* =============================
+   Modal Close Button
+============================= */
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+    color: #111;
+}
+
+/* =============================
+   Auth Forms (Login/Signup)
+============================= */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.auth-form input {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: #0077ff;
+}
+
+.auth-form button {
+    background-color: #0077ff;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition:
+        background-color 0.2s ease,
+        transform 0.1s ease;
+}
+
+.auth-form button:hover {
+    background-color: #005fcc;
+    transform: scale(1.03);
+}
+
+.auth-form h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* =============================
+   ✨ Enhanced Modal Visuals
+============================= */
+
+/* Subtle glow under modal */
+.modal::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: radial-gradient(
+        circle at center,
+        rgba(0, 119, 255, 0.25),
+        transparent 70%
+    );
+    z-index: -1;
+    filter: blur(10px);
+}
+
+/* Slight zoom-in on modal open */
+.modal {
+    transform: scale(1);
+    animation: modalZoomIn 0.25s ease;
+}
+
+@keyframes modalZoomIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

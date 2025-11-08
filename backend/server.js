@@ -14,7 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // middleware
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(bodyParser.json());
 
 // define the routes
@@ -22,7 +22,7 @@ app.use("/api/expenses", expenseRoute);
 app.use("/api/user", userRoute);
 
 app.get("/", (req, res) => {
-  res.send("Helloooooooooooo!");
+  res.send("Helloooooooooooo from server with express");
 });
 
 app.listen(PORT, () => {

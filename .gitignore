@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+*.sqlite
 
 *.txt
 
@@ -20,6 +21,7 @@ dist-ssr/
 *.local
 .env
 .env.*.local
+
 
 # MacOS system files
 .DS_Store

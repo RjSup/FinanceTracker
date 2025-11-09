@@ -8,7 +8,7 @@
 
 body {
     margin: 0;
-    background: rgba(255, 255, 255, 1);
+    background: rgba(243, 243, 243, 0.1);
     font-family: "Poppins", sans-serif;
 }
 
@@ -21,12 +21,12 @@ body {
     justify-content: center;
     align-items: center;
     gap: 1.2rem;
-    background: rgba(255, 255, 255, 1);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     width: fit-content;
-    margin: 3% auto;
+    margin: 2rem auto 1rem;
     padding: 0.6rem 1rem;
     overflow: hidden;
 }
@@ -34,7 +34,7 @@ body {
 #navbar a {
     position: relative;
     padding: 0.6rem 1rem;
-    border-radius: 12px;
+    border-radius: 18px;
     text-decoration: none;
     color: black;
     font-weight: 600;
@@ -45,13 +45,37 @@ body {
 }
 
 #navbar a:hover {
-    transform: scale(1.25);
+    transform: scale(1.05);
+    background: rgba(119, 158, 203, 0.2);
+    color: black;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(119, 158, 203, 0.4);
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.2s ease;
+}
+
+#navbar a.active {
+    background: rgb(119, 158, 203);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(119, 158, 203, 0.4);
+    transform: scale(1.05);
 }
 
 #title {
     text-align: center;
-    color: blue;
+    color: rgb(119, 158, 203);
     margin-top: 2rem;
+}
+
+#user {
+    text-align: center;
+    color: rgb(119, 158, 203);
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
 }
 
 /* =============================
@@ -75,7 +99,7 @@ body {
 }
 
 .modal {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 1rem;
     padding: 2rem;
     width: 100%;
@@ -141,7 +165,7 @@ body {
 }
 
 .auth-form button {
-    background-color: #0077ff;
+    background-color: rgb(119, 158, 203);
     color: white;
     border: none;
     padding: 0.75rem;
@@ -154,7 +178,7 @@ body {
 }
 
 .auth-form button:hover {
-    background-color: #005fcc;
+    background-color: rgb(100, 138, 183);
     transform: scale(1.03);
 }
 
@@ -164,10 +188,8 @@ body {
 }
 
 /* =============================
-   ✨ Enhanced Modal Visuals
+    Modal Improvements
 ============================= */
-
-/* Subtle glow under modal */
 .modal::before {
     content: "";
     position: absolute;
@@ -182,7 +204,6 @@ body {
     filter: blur(10px);
 }
 
-/* Slight zoom-in on modal open */
 .modal {
     transform: scale(1);
     animation: modalZoomIn 0.25s ease;
@@ -197,4 +218,571 @@ body {
         transform: scale(1);
         opacity: 1;
     }
+}
+
+/* =============================
+   Dashboard Layout
+============================= */
+.dashboard-container {
+    display: flex;
+    min-height: calc(100vh - 250px);
+    gap: 2rem;
+    margin: 0 auto 2rem;
+    max-width: 1400px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    align-items: flex-start; /* fix welcome message alignment */
+}
+
+/* =============================
+   Sidebar
+============================= */
+.sidebar {
+    width: 220px;
+    background: linear-gradient(
+        135deg,
+        rgba(119, 158, 203, 0.1) 0%,
+        rgba(119, 158, 203, 0.05) 100%
+    );
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem 1rem;
+    border: 1px solid rgba(119, 158, 203, 0.2);
+
+    /* only wrap buttons, do not stretch */
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+/* =============================
+   Sidebar Navigation Buttons
+============================= */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    font-family: "Poppins", sans-serif;
+}
+
+.nav-button:hover {
+    background: rgba(119, 158, 203, 0.15);
+    transform: translateX(5px);
+}
+
+.nav-button.active {
+    background: rgb(119, 158, 203);
+    color: white;
+    box-shadow: 0 4px 12px rgba(119, 158, 203, 0.3);
+    transform: scale(1.02);
+}
+
+.nav-button i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* =============================
+   Content Area
+============================= */
+.content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* =============================
+   Views (Hide/Show Logic)
+============================= */
+.view {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.view h2 {
+    color: rgb(119, 158, 203);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.view h3 {
+    color: rgb(119, 158, 203);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+/* =============================
+   Summary Cards (Main Dashboard)
+============================= */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: linear-gradient(
+        135deg,
+        rgba(119, 158, 203, 0.1) 0%,
+        rgba(119, 158, 203, 0.05) 100%
+    );
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    text-align: center;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    border: 1px solid rgba(119, 158, 203, 0.2);
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(119, 158, 203, 0.2);
+}
+
+.summary-card h3 {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: rgb(119, 158, 203);
+    margin: 0;
+}
+
+/* =============================
+   Recent Expenses Section
+============================= */
+.recent-expenses {
+    background: linear-gradient(
+        135deg,
+        rgba(119, 158, 203, 0.05) 0%,
+        rgba(119, 158, 203, 0.02) 100%
+    );
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    border: 1px solid rgba(119, 158, 203, 0.15);
+}
+
+#recent-expenses-list,
+#history-expenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* =============================
+   Expense Item
+============================= */
+.expense-item {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    border: 1px solid rgba(119, 158, 203, 0.1);
+}
+
+.expense-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(119, 158, 203, 0.15);
+}
+
+.expense-info {
+    flex: 1;
+}
+
+.expense-category {
+    font-size: 0.85rem;
+    color: rgb(119, 158, 203);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.expense-description {
+    font-size: 1rem;
+    color: #333;
+    margin: 0.2rem 0;
+}
+
+.expense-date {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.expense-amount {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.expense-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    color: #666;
+}
+
+.btn-icon:hover {
+    background: rgba(119, 158, 203, 0.2);
+    color: rgb(119, 158, 203);
+}
+
+/* =============================
+   Filters Section
+============================= */
+.filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filters select {
+    padding: 0.6rem 1rem;
+    border: 1px solid rgba(119, 158, 203, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(14px);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Poppins", sans-serif;
+}
+
+.filters select:focus {
+    outline: none;
+    border-color: rgb(119, 158, 203);
+    box-shadow: 0 0 0 3px rgba(119, 158, 203, 0.1);
+}
+
+/* =============================
+   Forms (Add Expense, Settings)
+============================= */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1px solid rgba(119, 158, 203, 0.3);
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.9);
+    font-family: "Poppins", sans-serif;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: rgb(119, 158, 203);
+    box-shadow: 0 0 0 3px rgba(119, 158, 203, 0.1);
+}
+
+#add-expense-form,
+#budget-form {
+    background: linear-gradient(
+        135deg,
+        rgba(119, 158, 203, 0.05) 0%,
+        rgba(119, 158, 203, 0.02) 100%
+    );
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    max-width: 600px;
+    border: 1px solid rgba(119, 158, 203, 0.15);
+}
+
+/* =============================
+   Buttons
+============================= */
+.btn-primary {
+    background: linear-gradient(
+        135deg,
+        rgb(119, 158, 203) 0%,
+        rgb(100, 138, 183) 100%
+    );
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Poppins", sans-serif;
+    box-shadow: 0 4px 15px rgba(119, 158, 203, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(119, 158, 203, 0.4);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Poppins", sans-serif;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Poppins", sans-serif;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+/* =============================
+   Settings Sections
+============================= */
+.settings-section {
+    background: linear-gradient(
+        135deg,
+        rgba(119, 158, 203, 0.05) 0%,
+        rgba(119, 158, 203, 0.02) 100%
+    );
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(119, 158, 203, 0.15);
+}
+
+.settings-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.settings-section button {
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* =============================
+   Form Messages
+============================= */
+#form-message {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border-radius: 12px;
+    font-weight: 500;
+    display: none;
+}
+
+#form-message.success {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    display: block;
+}
+
+#form-message.error {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    display: block;
+}
+
+/* =============================
+   Empty State
+============================= */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: rgb(119, 158, 203);
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* =============================
+   Responsive Design
+============================= */
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+        padding: 1.5rem;
+        margin: 0 1rem 2rem;
+        align-items: center; /* center welcome message in mobile */
+    }
+
+    .sidebar {
+        width: 100%;
+        position: static;
+        transform: none;
+        margin-bottom: 1rem;
+        justify-content: flex-start;
+        display: flex;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.5rem;
+    }
+
+    .nav-button {
+        flex-shrink: 0;
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .nav-button:hover {
+        transform: translateX(0);
+        transform: scale(1.02);
+    }
+
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .expense-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .expense-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    #add-expense-form,
+    #budget-form {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .view h2 {
+        font-size: 1.5rem;
+    }
+
+    .card-value {
+        font-size: 1.5rem;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .filters select {
+        width: 100%;
+    }
+}
+
+/* =============================
+   Dashboard Welcome inside container
+============================= */
+.dashboard-container #user {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: rgb(119, 158, 203);
+    margin-bottom: 2rem;
+    width: 100%; /* ensure proper centering */
 }

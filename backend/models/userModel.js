@@ -1,31 +1,48 @@
 import db from "../database/db.js";
 import bcrypt from "bcrypt";
 
-// create a user with hashed password
+// function to create a user
 export async function createUser({ name, username, email, password }) {
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-  const query = db.prepare(`
-    INSERT INTO users (name, username, email, password)
-    VALUES (?, ?, ?, ?)
-  `);
+  // hash the pass for security
+  const hashedPassword = await bcrypt.hash(password, 10);
+  // insert into db
+  const query = db.prepare(
+    "INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)",
+  );
+  // run the func
   return query.run(name, username, email, hashedPassword);
 }
 
-// check user in db by email
+// get user by email
 export function userByEmail(email) {
-  const query = db.prepare(`SELECT * FROM users WHERE email = ?`);
+  // check against db
+  const query = db.prepare("SELECT * FROM users WHERE email = ?");
+  // return the detauls
   return query.get(email);
 }
 
-// check by username
+// get user by uname
 export function userByUsername(username) {
-  const query = db.prepare(`SELECT * FROM users WHERE username = ?`);
+  // check agasint db
+  const query = db.prepare("SELECT * FROM users WHERE username = ?");
+  // return the details
   return query.get(username);
 }
 
-// verify password during login
+// check pw against db pws
 export async function verifyPassword(inputPassword, hashedPassword) {
+  // take pw from user against hashed one in db
   return await bcrypt.compare(inputPassword, hashedPassword);
+}
+
+// set budget
+export function setBudget(userId, budgetValue) {
+  const query = db.prepare("UPDATE users SET budget = ? WHERE id = ?");
+  return query.run(budgetValue, userId);
+}
+
+// get the budget
+export function getBudget(userId) {
+  const query = db.prepare("SELECT budget FROM users WHERE id = ?");
+  return query.get(userId);
 }

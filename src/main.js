@@ -1,91 +1,147 @@
-console.log("working");
-// styling
-import "./style.css";
+import { showModal, closeModal } from "./components/modal.js";
+import { updateNavbar } from "./components/navbar.js";
 
-// components
-import { showModal } from "./components/modal.js";
+// heelpers
+const API_URL = "http://localhost:3000/api/user";
 
-// routes
-// import expenseRoute from "../backend/routes/expense.js";
-// import userRoute from "../backend/routes/user.js";
-
-// use this to send/query the express routes
-// using await fetch(route)
-
-// user things
-document.addEventListener("DOMContentLoaded", () => {
-  const signupBtn = document.querySelector("#signup");
-
-  if (!signupBtn) {
-    console.error("#signup element not found");
-    return;
+async function fetchJSON(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Request failed");
+    return data;
+  } catch (err) {
+    console.error(`Error fetching ${url}:`, err);
+    return { error: err.message };
   }
+}
 
-  signupBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    console.log("Worked");
+function showMessage(el, message, color = "red") {
+  if (!el) return;
+  el.textContent = message;
+  el.style.color = color;
+}
 
-    showModal(`
-      <h2>Sign Up</h2>
-          <form id="signupForm" class="auth-form">
-            <input type="text" id="signupName" placeholder="Name" required />
-            <input type="text" id="signupUsername" placeholder="Username" required />
-            <input type="email" id="signupEmail" placeholder="Email" required />
-            <input type="password" id="signupPassword" placeholder="Password" required />
-            <button type="submit">Sign Up</button>
-          </form>
-          <div id="signupMessage"></div>
-    `);
+function createAuthModal(title, fields) {
+  const inputsHTML = fields
+    .map(
+      (f) =>
+        `<input type="${f.type}" id="${f.id}" placeholder="${f.placeholder}" required />`,
+    )
+    .join("");
+  return `
+    <h2>${title}</h2>
+    <form id="${title.toLowerCase()}Form" class="auth-form">
+      ${inputsHTML}
+      <button type="submit">${title}</button>
+    </form>
+    <div id="${title.toLowerCase()}Message"></div>
+  `;
+}
 
-    // wait for modal form to exist in DOM
+// event Handlers
+function handleLogin() {
+  const loginBtn = document.querySelector("#login");
+  if (!loginBtn || localStorage.getItem("token")) return;
+
+  loginBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeModal();
+
+    showModal(
+      createAuthModal("Login", [
+        { type: "text", id: "loginUsername", placeholder: "Username" },
+        { type: "password", id: "loginPassword", placeholder: "Password" },
+      ]),
+    );
+
+    const loginForm = document.querySelector("#loginForm");
+    const loginMsg = document.querySelector("#loginMessage");
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const username = document.querySelector("#loginUsername").value.trim();
+      const password = document.querySelector("#loginPassword").value.trim();
+
+      if (!username || !password) {
+        showMessage(loginMsg, "Please fill all fields.");
+        return;
+      }
+
+      const data = await fetchJSON(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (data.error) {
+        showMessage(loginMsg, data.error);
+      } else {
+        localStorage.setItem("token", data.token);
+        closeModal();
+        updateNavbar("landing");
+        window.location.href = "/dashboard.html";
+      }
+    });
+  });
+}
+
+function handleSignup() {
+  const signupBtn = document.querySelector("#signup");
+  if (!signupBtn) return;
+
+  signupBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeModal();
+
+    showModal(
+      createAuthModal("SignUp", [
+        { type: "text", id: "signupName", placeholder: "Name" },
+        { type: "text", id: "signupUsername", placeholder: "Username" },
+        { type: "email", id: "signupEmail", placeholder: "Email" },
+        { type: "password", id: "signupPassword", placeholder: "Password" },
+      ]),
+    );
+
     const signupForm = document.querySelector("#signupForm");
     const signupMsg = document.querySelector("#signupMessage");
 
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      // get info
-      const name = document.querySelector("#signupName");
-      const username = document.querySelector("#signupUsername");
-      const email = document.querySelector("#signupEmail");
-      const password = document.querySelector("#signupPassword");
+      const name = document.querySelector("#signupName").value.trim();
+      const username = document.querySelector("#signupUsername").value.trim();
+      const email = document.querySelector("#signupEmail").value.trim();
+      const password = document.querySelector("#signupPassword").value.trim();
 
-      // validate
       if (!name || !username || !email || !password) {
-        signupMsg.textContent = "Please fill all fields.";
-        signupMsg.style.color = "red";
+        showMessage(signupMsg, "Please fill all fields.");
         return;
       }
 
-      try {
-        // send POST
-        const response = await fetch("http://localhost:3000/api/user/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: name.value,
-            username: username.value,
-            email: email.value,
-            password: password.value,
-          }),
-        });
+      const data = await fetchJSON(`${API_URL}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, username, email, password }),
+      });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          signupMsg.textContent = data.message || "Signup failed.";
-          signupMsg.style.color = "red";
-        } else {
-          signupMsg.textContent = "Signup successful.";
-          signupMsg.style.color = "green";
-          signupForm.reset();
-        }
-      } catch (err) {
-        console.error("Signup error:", err);
-        signupMsg.textContent = "An error occurred. Try again.";
-        signupMsg.style.color = "red";
+      if (data.error) {
+        showMessage(signupMsg, data.error);
+      } else {
+        showMessage(
+          signupMsg,
+          "Signup successful. You can now log in.",
+          "green",
+        );
+        signupForm.reset();
       }
     });
   });
+}
+
+// init
+document.addEventListener("DOMContentLoaded", () => {
+  updateNavbar("landing");
+  handleLogin();
+  handleSignup();
 });
-//expense things

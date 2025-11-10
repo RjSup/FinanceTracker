@@ -1,1 +1,1 @@
-[Example Image](/public/heroimagepng)
+[Example Image](/public/heroimage.png)

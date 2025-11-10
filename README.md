@@ -1,1 +1,1 @@
-[Example Image](/public/heroimage.png)
+[Ledgerly screenshot](/public/example.png)

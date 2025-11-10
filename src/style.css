@@ -108,7 +108,7 @@ body {
     font-weight: 800; /* bold */
     font-size: 3.5rem;
     line-height: 1.25;
-    color: rgb(119, 158, 203);
+    color: #92b4fb;
     text-align: left;
     letter-spacing: 2px;
     margin-bottom: 0, 5rem;
@@ -116,12 +116,16 @@ body {
 
 #subtitle {
     font-weight: 500; /* slightly lighter */
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: rgb(119, 158, 203);
     text-align: left;
     letter-spacing: 2px;
     margin-bottom: 1.5rem;
     line-height: 1.25;
+}
+
+#spanid {
+    color: #ff7163;
 }
 
 #signuphero {
@@ -134,6 +138,7 @@ body {
     text-decoration: none;
     border-radius: 12px;
     background-color: rgb(119, 158, 203);
+
     color: white;
     font-weight: 400;
     font-size: 0.95rem;
@@ -145,7 +150,7 @@ body {
 }
 
 #signuphero:hover {
-    background-color: rgb(145, 180, 215);
+    background-color: #ff7163;
     transform: scale(1.05);
 }
 
@@ -307,7 +312,7 @@ body {
 }
 
 .auth-form button:hover {
-    background-color: rgb(100, 138, 183);
+    background-color: #ff7163;
     transform: scale(1.03);
 }
 

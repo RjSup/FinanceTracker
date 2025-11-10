@@ -87,54 +87,58 @@ function handleLogin() {
 }
 
 function handleSignup() {
-  const signupBtn = document.querySelector("#signup");
-  if (!signupBtn) return;
+  const signupBtns = [
+    document.querySelector("#signup"),
+    document.querySelector("#signuphero"),
+  ].filter(Boolean); // remove nulls if button not found
 
-  signupBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    closeModal();
+  signupBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeModal();
 
-    showModal(
-      createAuthModal("SignUp", [
-        { type: "text", id: "signupName", placeholder: "Name" },
-        { type: "text", id: "signupUsername", placeholder: "Username" },
-        { type: "email", id: "signupEmail", placeholder: "Email" },
-        { type: "password", id: "signupPassword", placeholder: "Password" },
-      ]),
-    );
+      showModal(
+        createAuthModal("SignUp", [
+          { type: "text", id: "signupName", placeholder: "Name" },
+          { type: "text", id: "signupUsername", placeholder: "Username" },
+          { type: "email", id: "signupEmail", placeholder: "Email" },
+          { type: "password", id: "signupPassword", placeholder: "Password" },
+        ]),
+      );
 
-    const signupForm = document.querySelector("#signupForm");
-    const signupMsg = document.querySelector("#signupMessage");
+      const signupForm = document.querySelector("#signupForm");
+      const signupMsg = document.querySelector("#signupMessage");
 
-    signupForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
+      signupForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-      const name = document.querySelector("#signupName").value.trim();
-      const username = document.querySelector("#signupUsername").value.trim();
-      const email = document.querySelector("#signupEmail").value.trim();
-      const password = document.querySelector("#signupPassword").value.trim();
+        const name = document.querySelector("#signupName").value.trim();
+        const username = document.querySelector("#signupUsername").value.trim();
+        const email = document.querySelector("#signupEmail").value.trim();
+        const password = document.querySelector("#signupPassword").value.trim();
 
-      if (!name || !username || !email || !password) {
-        showMessage(signupMsg, "Please fill all fields.");
-        return;
-      }
+        if (!name || !username || !email || !password) {
+          showMessage(signupMsg, "Please fill all fields.");
+          return;
+        }
 
-      const data = await fetchJSON(`${API_URL}/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, username, email, password }),
+        const data = await fetchJSON(`${API_URL}/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, username, email, password }),
+        });
+
+        if (data.error) {
+          showMessage(signupMsg, data.error);
+        } else {
+          showMessage(
+            signupMsg,
+            "Signup successful. You can now log in.",
+            "green",
+          );
+          signupForm.reset();
+        }
       });
-
-      if (data.error) {
-        showMessage(signupMsg, data.error);
-      } else {
-        showMessage(
-          signupMsg,
-          "Signup successful. You can now log in.",
-          "green",
-        );
-        signupForm.reset();
-      }
     });
   });
 }

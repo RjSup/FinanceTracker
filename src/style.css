@@ -12,6 +12,21 @@ body {
     font-family: "Poppins", sans-serif;
 }
 
+#main {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+    padding-top: 2rem;
+}
+
+#mainDash {
+    padding-top: 2rem;
+    background: rgba(243, 243, 243, 0.1);
+}
+
 /* =============================
    Navbar
 ============================= */
@@ -29,6 +44,7 @@ body {
     margin: 2rem auto 1rem;
     padding: 0.6rem 1rem;
     overflow: hidden;
+    margin-bottom: 5rem;
 }
 
 #navbar a {
@@ -64,10 +80,123 @@ body {
     transform: scale(1.05);
 }
 
+/* =============================
+   Hero Section Adjustments
+============================= */
+.hero {
+    display: flex;
+    align-items: flex-start; /* top-align text and image */
+    justify-content: flex-start; /* align everything to the left */
+    max-width: 1200px;
+    margin: 1rem auto;
+    gap: 0.5rem; /* space between text and image */
+    flex-wrap: wrap; /* allow wrapping on smaller screens */
+    padding-left: 0.5rem; /* move content slightly right */
+}
+
+.hero-text {
+    flex: 1 1 450px; /* allow resizing but maintain width */
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* spacing between title and subtitle */
+    margin-top: 5rem;
+    margin-left: 3.5rem;
+}
+
 #title {
-    text-align: center;
+    font-weight: 800; /* bold */
+    font-size: 3.5rem;
+    line-height: 1.25;
     color: rgb(119, 158, 203);
-    margin-top: 2rem;
+    text-align: left;
+    letter-spacing: 2px;
+    margin-bottom: 0, 5rem;
+}
+
+#subtitle {
+    font-weight: 500; /* slightly lighter */
+    font-size: 1rem;
+    color: rgb(119, 158, 203);
+    text-align: left;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    line-height: 1.25;
+}
+
+#signuphero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1rem;
+    width: 10rem;
+    height: 3rem;
+    text-decoration: none;
+    border-radius: 12px;
+    background-color: rgb(119, 158, 203);
+    color: white;
+    font-weight: 400;
+    font-size: 0.95rem;
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease;
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+
+#signuphero:hover {
+    background-color: rgb(145, 180, 215);
+    transform: scale(1.05);
+}
+
+.hero-image {
+    flex: 1 1 450px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+/* =============================
+   Responsive Hero Adjustments
+============================= */
+@media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        padding-left: 1rem;
+        gap: 1.5rem;
+    }
+
+    .hero-text,
+    .hero-image {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+
+    .hero-text {
+        align-items: flex-start; /* keep text left-aligned */
+    }
+
+    .hero-image {
+        margin-top: 0;
+        justify-content: center; /* center image under text */
+    }
+}
+
+#navbrand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: rgb(119, 158, 203);
+    margin-right: 0.1rem;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: 2px;
 }
 
 #user {
@@ -377,6 +506,7 @@ body {
 
 .summary-card:hover {
     transform: translateY(-5px);
+    background: rgba(119, 158, 203, 0.2);
     box-shadow: 0 8px 30px rgba(119, 158, 203, 0.2);
 }
 
@@ -437,6 +567,8 @@ body {
 
 .expense-item:hover {
     transform: translateX(5px);
+    background: rgba(119, 158, 203, 0.2);
+
     box-shadow: 0 4px 15px rgba(119, 158, 203, 0.15);
 }
 

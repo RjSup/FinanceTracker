@@ -46,3 +46,8 @@ export function getBudget(userId) {
   const query = db.prepare("SELECT budget FROM users WHERE id = ?");
   return query.get(userId);
 }
+
+export function deleteUser(userId) {
+  const query = db.prepare("DELETE FROM users WHERE id = ?");
+  return query.run(userId);
+}

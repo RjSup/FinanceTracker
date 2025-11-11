@@ -1,12 +1,10 @@
 import { updateNavbar } from "./components/navbar.js";
 
-// global
+// GLOBAL
 const token = localStorage.getItem("token");
 if (!token) window.location.href = "/";
-
 updateNavbar("dashboard");
 
-// helpers
 const authHeaders = () => ({ Authorization: `Bearer ${token}` });
 
 async function fetchJSON(url, options = {}) {
@@ -32,14 +30,22 @@ function getCurrentMonthParam() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
-// budget
+function getDate() {
+  const dateFooter = document.querySelector("#footerid");
+  const currYear = new Date().getFullYear();
+  dateFooter.textContent = `© ${currYear} Ledgerly`;
+}
+
+// ---------- BUDGET ----------
+
 async function loadBudget() {
   const budgetEl = document.querySelector("#budget-amount");
   const data = await fetchJSON("http://localhost:3000/api/user/getBudget");
   if (budgetEl) budgetEl.textContent = formatCurrency(data?.budget || 0);
 }
 
-// expenses
+// ---------- EXPENSES ----------
+
 async function getMonthExpenses() {
   const monthParam = getCurrentMonthParam();
   return (
@@ -52,7 +58,6 @@ async function getMonthExpenses() {
 async function updateMonthTotal() {
   const expensesEl = document.querySelector("#spent-amount");
   if (!expensesEl) return;
-
   const expenses = await getMonthExpenses();
   const total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
   expensesEl.textContent = formatCurrency(total);
@@ -71,6 +76,8 @@ async function calcRemaining() {
   const totalSpent = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
   remainingEl.textContent = formatCurrency(budget - totalSpent);
 }
+
+// ---------- RECENT EXPENSES ----------
 
 async function loadRecentExpenses() {
   const list = document.querySelector("#recent-expenses-list");
@@ -99,7 +106,67 @@ async function loadRecentExpenses() {
     .join("");
 }
 
-// forms
+// ---------- NOTIFICATIONS ----------
+
+async function loadNotifications() {
+  const list = document.querySelector("#notifications-list");
+  const empty = document.querySelector("#empty-notifications");
+
+  const data = await fetchJSON("http://localhost:3000/api/notifications"); // <- plural
+  const notifications = data?.notifications || [];
+
+  if (notifications.length === 0) {
+    empty.style.display = "flex";
+    list.innerHTML = "";
+    return;
+  }
+
+  empty.style.display = "none";
+
+  list.innerHTML = notifications
+    .map(
+      (n) => `
+      <div class="notification-item ${n.read ? "read" : ""}" data-id="${n.id}">
+        <span class="notification-title">${n.title}</span>
+        <button class="notification-delete" data-id="${n.id}">Delete</button>
+      </div>
+    `,
+    )
+    .join("");
+
+  // Setup delete buttons
+  document.querySelectorAll(".notification-delete").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation(); // Prevent triggering "mark as read"
+      const id = e.target.dataset.id;
+      const res = await fetchJSON(
+        `http://localhost:3000/api/notifications/${id}`,
+        {
+          method: "DELETE",
+        },
+      );
+      if (res?.success) loadNotifications();
+    });
+  });
+
+  // Mark as read on click
+  document.querySelectorAll(".notification-item").forEach((item) => {
+    item.addEventListener("click", async () => {
+      const id = item.dataset.id;
+      if (item.classList.contains("read")) return; // already read
+      const res = await fetchJSON(
+        `http://localhost:3000/api/notifications/read/${id}`,
+        {
+          method: "POST",
+        },
+      );
+      if (res?.success) item.classList.add("read");
+    });
+  });
+}
+
+// ---------- FORMS ----------
+
 function setupAddExpenseForm() {
   const form = document.querySelector("#add-expense-form");
   const message = document.querySelector("#form-message");
@@ -107,7 +174,6 @@ function setupAddExpenseForm() {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const amount = parseFloat(document.querySelector("#expense-amount").value);
     const category = document.querySelector("#expense-category").value;
     const description = document
@@ -115,7 +181,7 @@ function setupAddExpenseForm() {
       .value.trim();
     const spent_at = document.querySelector("#expense-date").value;
 
-    if (!amount || !category || !description || !spent_at) {
+    if (!amount || !category || !spent_at) {
       message.textContent = "Please fill required fields";
       message.style.color = "red";
       return;
@@ -138,7 +204,6 @@ function setupAddExpenseForm() {
 
     message.textContent = "Expense added successfully!";
     message.style.color = "green";
-
     form.reset();
     document.querySelector("#expense-date").value = new Date()
       .toISOString()
@@ -147,22 +212,21 @@ function setupAddExpenseForm() {
     await loadRecentExpenses();
     await updateMonthTotal();
     await calcRemaining();
+    await loadNotifications();
   });
 }
 
 function setupBudgetForm() {
-  const budgetForm = document.querySelector("#budget-form");
+  const form = document.querySelector("#budget-form");
   const errorEl = document.querySelector("#errors");
-  if (!budgetForm || !errorEl) return;
+  if (!form || !errorEl) return;
 
-  budgetForm.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const budgetInput = document.getElementById("budget-input");
-    if (!budgetInput) return;
-
     const budgetValue = parseFloat(budgetInput.value);
     if (isNaN(budgetValue) || budgetValue < 0) {
-      errorEl.textContent = "Error: Please enter a valid budget amount";
+      errorEl.textContent = "Enter valid budget";
       errorEl.style.color = "red";
       return;
     }
@@ -179,16 +243,18 @@ function setupBudgetForm() {
       return;
     }
 
-    errorEl.textContent = "Budget updated successfully!";
+    errorEl.textContent = "Budget updated!";
     errorEl.style.color = "green";
     budgetInput.value = "";
 
     await loadBudget();
     await calcRemaining();
+    await loadNotifications();
   });
 }
 
-// Navigation
+// ---------- NAVIGATION ----------
+
 function setupNavigation() {
   const navButtons = document.querySelectorAll(".nav-button");
   const views = document.querySelectorAll(".view");
@@ -197,23 +263,46 @@ function setupNavigation() {
     views.forEach((v) => v.classList.remove("active"));
     navButtons.forEach((b) => b.classList.remove("active"));
 
-    const targetView = document.getElementById(`${viewName}-view`);
-    if (targetView) targetView.classList.add("active");
+    const target = document.getElementById(`${viewName}-view`);
+    if (target) target.classList.add("active");
 
     const activeButton = document.querySelector(`[data-view="${viewName}"]`);
     if (activeButton) activeButton.classList.add("active");
   }
 
-  navButtons.forEach((b) =>
-    b.addEventListener("click", () => switchView(b.dataset.view)),
+  navButtons.forEach((btn) =>
+    btn.addEventListener("click", () => switchView(btn.dataset.view)),
   );
 }
 
-// init
+// ---------- DELETE ACCOUNT ----------
+
+function setupDeleteAccount() {
+  const deleteBtn = document.querySelector("#clear-data");
+  const statusEl = document.querySelector("#status");
+  if (!deleteBtn || !statusEl) return;
+
+  deleteBtn.addEventListener("click", async () => {
+    if (!confirm("Are you sure you want to delete this account?")) return;
+    const res = await fetchJSON("http://localhost:3000/api/user/deleteUser", {
+      method: "DELETE",
+    });
+    if (!res?.success) {
+      statusEl.textContent = "Failed to delete account";
+      return;
+    }
+    statusEl.textContent = "Account deleted";
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  });
+}
+
+// ---------- INIT ----------
+
 document.addEventListener("DOMContentLoaded", async () => {
-  const title = document.getElementById("title");
-  const username = document.querySelector("#user");
-  if (title) title.textContent = "Dashboard";
+  const usernameEl = document.querySelector("#user");
+  const titleEl = document.getElementById("title");
+  if (titleEl) titleEl.textContent = "Dashboard";
 
   const userData = await fetchJSON("http://localhost:3000/api/user/getUser");
   if (!userData) {
@@ -222,23 +311,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  if (username) {
-    username.textContent = `Welcome back, ${userData.name.toUpperCase()}!`;
-    username.style.color = "black";
+  if (usernameEl) {
+    usernameEl.textContent = `Welcome back, ${userData.name.toUpperCase()}!`;
+    usernameEl.style.color = "black";
   }
+
+  const today = new Date().toISOString().split("T")[0];
+  const expenseDateInput = document.getElementById("expense-date");
+  if (expenseDateInput) expenseDateInput.value = today;
 
   await Promise.all([
     loadBudget(),
     loadRecentExpenses(),
     updateMonthTotal(),
     calcRemaining(),
+    loadNotifications(),
   ]);
-
   setupAddExpenseForm();
   setupBudgetForm();
   setupNavigation();
-
-  const expenseDateInput = document.getElementById("expense-date");
-  if (expenseDateInput)
-    expenseDateInput.value = new Date().toISOString().split("T")[0];
+  setupDeleteAccount();
+  getDate();
 });

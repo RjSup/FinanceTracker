@@ -1,7 +1,7 @@
 import { showModal, closeModal } from "./components/modal.js";
 import { updateNavbar } from "./components/navbar.js";
 
-// heelpers
+// helpers
 const API_URL = "http://localhost:3000/api/user";
 
 async function fetchJSON(url, options = {}) {
@@ -14,6 +14,12 @@ async function fetchJSON(url, options = {}) {
     console.error(`Error fetching ${url}:`, err);
     return { error: err.message };
   }
+}
+
+function getDate() {
+  const dateFooter = document.querySelector("#footerid");
+  const currYear = new Date().getFullYear();
+  dateFooter.textContent = `© ${currYear} Ledgerly`;
 }
 
 function showMessage(el, message, color = "red") {
@@ -143,9 +149,24 @@ function handleSignup() {
   });
 }
 
+// =============================
+// NAVBAR DROPDOWN TOGGLE
+// =============================
+function handleNavbarDropdown() {
+  const menuToggle = document.getElementById("menu-toggle");
+  const navbar = document.getElementById("navbar");
+  if (!menuToggle || !navbar) return;
+
+  menuToggle.addEventListener("click", () => {
+    navbar.classList.toggle("open");
+  });
+}
+
 // init
 document.addEventListener("DOMContentLoaded", () => {
   updateNavbar("landing");
   handleLogin();
   handleSignup();
+  handleNavbarDropdown(); // initialize dropdown
+  getDate();
 });

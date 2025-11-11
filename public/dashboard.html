@@ -47,6 +47,10 @@
                             <i class="fa fa-fw fa-cog"></i>
                             Settings
                         </button>
+                        <button class="nav-button" data-view="notifications">
+                            <i class="fa fa-fw fa-bell"></i>
+                            Notifications
+                        </button>
                     </nav>
                 </aside>
 
@@ -213,22 +217,41 @@
                         </div>
 
                         <div class="settings-section">
-                            <h3>Categories</h3>
-                            <p>Manage your expense categories (Coming soon)</p>
-                        </div>
-
-                        <div class="settings-section">
                             <h3>Data</h3>
-                            <button class="btn-secondary" id="export-data">
-                                Export Data (CSV)
-                            </button>
                             <button class="btn-danger" id="clear-data">
-                                Clear All Data
+                                Delete account
                             </button>
+                            <p id="status"></p>
+                        </div>
+                    </section>
+
+                    <!-- Notifications View -->
+                    <section id="notifications-view" class="view">
+                        <h2>Notifications</h2>
+
+                        <div
+                            id="notifications-section"
+                            class="notifications-section"
+                        >
+                            <h3>Recent Notifications</h3>
+
+                            <!-- Empty State (shown when no notifications) -->
+                            <div class="empty-state" id="empty-notifications">
+                                <i class="fa fa-bell-o notification-icon"></i>
+                                <p>
+                                    No notifications yet. You're all caught up!
+                                </p>
+                            </div>
+
+                            <!-- Dynamic Notifications List -->
+                            <div id="notifications-list">
+                                <!-- Notifications will be dynamically inserted here -->
+                            </div>
                         </div>
                     </section>
                 </main>
             </div>
+            <footer id="footerid">Ledger</footer>
         </div>
         <script type="module" src="/src/dashboard.js"></script>
     </body>

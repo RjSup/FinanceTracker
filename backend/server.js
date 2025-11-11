@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import expenseRoute from "./routes/expense.js";
 import userRoute from "./routes/user.js";
 import dashboardRoute from "./routes/dashboard.js";
+import notificationRoute from "./routes/notification.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 app.use("/api/expense", expenseRoute);
 app.use("/api/user", userRoute);
 app.use("/api/dashboard", dashboardRoute);
+app.use("/api/notifications", notificationRoute);
 
 // random main route
 app.get("/", (req, res) => {

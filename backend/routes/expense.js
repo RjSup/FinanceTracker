@@ -2,81 +2,75 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import {
   addExpense,
-  getRecent,
-  getExpensesByMonth,
+  getMonthExpenses,
+  getRecentExpenses,
+  getTypeId,
 } from "../models/expenseModel.js";
+import { addNotification } from "../models/notificationModel.js";
+import { getBudget } from "../models/userModel.js";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 
 // Add expense
-router.post("/addExpense", (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) return res.status(401).json({ message: "No token provided" });
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const userId = decoded.id;
-    const { amount, category, description, spent_at } = req.body;
-
-    if (!amount || !category || !spent_at) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const result = addExpense(userId, amount, category, description, spent_at);
-
-    return res.status(201).json({
-      message: "Expense created successfully",
-      expenseId: result.lastInsertRowid,
-    });
-  } catch (err) {
-    console.error("Error adding expense:", err);
-    return res.status(500).json({ message: err.message });
-  }
-});
-
-// Get recent expenses
-router.get("/getRecent", (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) return res.status(401).json({ message: "No token provided" });
+router.post("/addExpense", async (req, res) => {
+  const { amount, category, description, spent_at } = req.body;
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "No token" });
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     const userId = decoded.id;
 
-    const expenses = getRecent(userId, 5);
+    const type_id = getTypeId(category);
+    if (!type_id) return res.status(400).json({ message: "Invalid category" });
 
-    res.json({ expenses });
+    addExpense(userId, type_id, amount, description, spent_at);
+    addNotification(
+      userId,
+      `Expense added: £${amount} - ${description || "No description"}`,
+    );
+
+    const budget = getBudget(userId)?.budget || 0;
+    const expenses = getMonthExpenses(
+      userId,
+      new Date().toISOString().slice(0, 7),
+    );
+    const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+
+    if (totalSpent >= budget)
+      addNotification(userId, `You have gone over your budget!`);
+    else if (budget - totalSpent <= 0)
+      addNotification(userId, `Budget remaining ≤ 0`);
+
+    res.json({ success: true });
   } catch (err) {
-    console.error("Error getting recent expenses:", err);
     res.status(500).json({ message: err.message });
   }
 });
 
-// Get expenses for a specific month
-router.get("/getExpenses/:month", (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) return res.status(401).json({ message: "No token provided" });
-
+// Get recent expenses
+router.get("/getRecent", async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "No token" });
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    const userId = decoded.id;
-    const { month } = req.params;
+    const expenses = getRecentExpenses(decoded.id);
+    res.json({ expenses });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
-    if (!month)
-      return res.status(400).json({ message: "Month parameter missing" });
-
-    const expenses = getExpensesByMonth(userId, month);
-
+// Get monthly expenses
+router.get("/getExpenses/:month", async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "No token" });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const expenses = getMonthExpenses(decoded.id, req.params.month);
     res.json(expenses);
   } catch (err) {
-    console.error("Error getting monthly expenses:", err);
     res.status(500).json({ message: err.message });
   }
 });

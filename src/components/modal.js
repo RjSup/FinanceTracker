@@ -1,4 +1,3 @@
-// src/components/modal.js
 export function showModal(contentHTML) {
   // Remove existing modal if present
   closeModal();
